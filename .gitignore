@@ -1,0 +1,17 @@
+# Generated HTML files
+*.html
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Claude Code - local overrides only (settings.json is shared)
+.claude/settings.local.json
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store

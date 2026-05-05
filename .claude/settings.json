@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [{
+          "type": "command",
+          "command": "afplay /System/Library/Sounds/Glass.aiff"
+        }]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [{
+          "type": "command",
+          "command": "afplay /System/Library/Sounds/Basso.aiff"
+        }]
+      }
+    ]
+  }
+}

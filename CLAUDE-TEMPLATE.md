@@ -43,6 +43,8 @@
 | Need to search/explore codebase | **Explore Agent** (don't guess file paths) |
 | Multi-step research spanning many files | **general-purpose Agent** |
 | Implementation done | **Review** — check edge cases, security, over-engineering |
+| Scope or priorities changed | **Update CLAUDE.md** `## Scope` / `## Active Decisions` — keep it lightweight (2-3 lines) |
+| Settled an architecture decision | **Write an ADR** in `docs/decisions/` with full rationale — litmus test: would another dev need this? |
 | User corrects approach or gives feedback | **Save to Memory** immediately |
 | User says "remember X" | **Save to Memory** immediately |
 
@@ -51,7 +53,7 @@
 - Don't mock in tests unless the user explicitly approves it
 - Don't over-engineer — three similar lines > premature abstraction
 - Don't add error handling for scenarios that can't happen
-- Don't create docs/README unless asked
+- Don't create docs/README unless asked (docs/decisions/ ADRs are the exception — create those when architecture decisions settle)
 
 ### Commit style
 - `<type>: <short description>` — type is feat/fix/chore/docs/refactor/test

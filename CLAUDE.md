@@ -19,6 +19,7 @@
 - CLI tool: `python md_preview.py input.md` → `input.html`
 - Support: headings, paragraphs, bold/italic, links, images, code blocks, unordered lists
 - No live server, no file watcher
+- This repo also contains playbook documentation (CLAUDE-CODE-*.md, CLAUDE-TEMPLATE.md) and docs/decisions/ for settled architecture decisions
 
 ## Active Decisions
 - No active debates — scope is stable for v1

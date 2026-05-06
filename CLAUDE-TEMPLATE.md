@@ -19,10 +19,12 @@
 ## Scope
 - [what the project does — features, outputs, supported use cases]
 - [what's explicitly out of scope — no server, no auth, etc.]
+<!-- When scope changes: update this list. Save the *reason* to project memory (if only Claude needs it) or docs/decisions/ (if the team needs it too). -->
 
 ## Active Decisions
 - [things we're reconsidering, on hold, or actively debating]
-- [keep this short — 2-3 lines. Update as priorities shift]
+- [keep this short — 2-3 lines. Update as priorities shift.]
+<!-- For settled architecture decisions with full rationale, write them up in docs/decisions/ (version-controlled, team-visible). -->
 
 ## Constraints
 - [things that must NOT be changed]

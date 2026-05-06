@@ -71,6 +71,15 @@
 - Keep it current — when conventions change, CLAUDE.md changes too
 - Use `/init` to have Claude auto-generate a first draft
 
+**Scope + Active Decisions: the lightweight feature state**
+
+`## Scope` and `## Active Decisions` together form the project's "working memory" — the one artifact Claude reads every session to understand what we're building, what changed, and what's being reconsidered. They are the place for lightweight, high-churn feature state:
+
+- **Scope** — current project boundary. What's in, what's explicitly out. Updated when scope changes.
+- **Active Decisions** — transient debates and reconsiderations. "Considering replacing REST with GraphQL" or "Auth rewrite on hold until Q3." Keep to 2-3 lines.
+
+When something gets removed from Scope or Active Decisions, ask: *"Would another developer need to know why we dropped this?"* If yes → write an ADR in `docs/decisions/`. If only Claude needs it → save to project Memory. Both channels are covered below in Section 1.3.
+
 ### 1.2 .claude/ Directory
 
 `.claude/` is the project-level configuration directory for Claude Code, placed at the project root:
@@ -150,6 +159,25 @@ Integration tests must connect to a real database, no mocking.
 **Why:** Last time mocked tests passed but the production migration failed — mock/prod divergence went undetected.
 **How to apply:** Any test involving database operations must use a real test database.
 ```
+
+### 1.4 Which Channel for What — Decision Framework
+
+Project knowledge lives in three channels with different reach, weight, and audience:
+
+| Channel | Loaded when | Audience | Best for |
+|---------|-------------|----------|----------|
+| **CLAUDE.md** (Scope + Active Decisions) | Every session, always | Claude + team | Lightweight feature state: what we're building, what changed, what's being reconsidered |
+| **docs/decisions/** (ADRs) | When the topic area surfaces | Team + future you | Settled architecture decisions with full rationale — "why SQLite over Postgres" |
+| **Memory** (project type) | On-demand, by relevance | Claude only | Deep history: "we abandoned live preview because hot-reload broke under concurrent edits" |
+| **Git log** | Only when queried | Everyone | Forensic: what actually shipped, in what order |
+| **Code itself** | When read/explored | Everyone | Ground truth of what exists right now |
+
+**Litmus test:** *"Would another developer joining tomorrow need this to avoid wasting time?"* If yes → `docs/decisions/`. If no, but Claude would serve you better by knowing it → Memory.
+
+**Anti-patterns:**
+- Don't put team-relevant design rationale in Memory — it's invisible to teammates
+- Don't put personal preferences in `docs/decisions/` — those aren't architecture decisions
+- Don't let CLAUDE.md Scope/Active Decisions grow stale — they're the most important 10 lines you update
 
 ---
 

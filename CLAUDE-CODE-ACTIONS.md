@@ -72,16 +72,19 @@ Claude automatically saves feedback memory when you correct it. But project memo
 | You abandoned an approach / feature direction | "Remember why we abandoned X, save as project memory" |
 | You updated CLAUDE.md Scope / Active Decisions, removed something | Also save the *reason* for removal as project memory |
 
-**Natural trigger:** Every time you update CLAUDE.md `## Scope` or `## Active Decisions` and something is removed — ask yourself "Will I remember why I dropped this six months from now?" If unsure, save to memory.
+**Natural trigger:** Every time you update CLAUDE.md `## Scope` or `## Active Decisions` and something is removed — ask yourself "Will I remember why I dropped this six months from now?" If unsure, apply the litmus test: would another developer need it? → `docs/decisions/`. Only Claude needs it? → Memory.
 
 **Where to put information — Quick reference:**
 
 | Where | Best For | When Loaded |
 |------|---------|---------|
 | CLAUDE.md | Current tech stack, conventions, Scope, Active Decisions, Constraints | Every session |
+| docs/decisions/ | Settled architecture decisions with full rationale, team-visible design docs | When the topic area surfaces |
 | Memory (project) | Reasons for abandoned approaches, historical decisions, architecture rationale | On-demand retrieval |
 | Memory (feedback) | User corrections and preferences | On-demand retrieval |
 | Task | Work progress for the current session | Current session only |
+
+**Litmus test:** *"Would another developer joining tomorrow need this to avoid wasting time?"* If yes → `docs/decisions/`. If only Claude needs it to assist you better → Memory.
 
 Don't save: current task progress details (use Tasks), things you can read from the code (just read the code).
 

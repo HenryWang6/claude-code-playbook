@@ -33,6 +33,7 @@
 
 ```markdown
 # Project Name
+> A web app with React frontend and Go backend
 
 ## Tech Stack
 - Frontend: React 18 + TypeScript + Tailwind
@@ -51,10 +52,17 @@
 - internal/handlers/ — HTTP handlers
 - internal/service/ — business logic
 
-## Important Notes
+## Scope
+- User-facing web app with auth, dashboard, and data export
+- No mobile app, no offline support
+
+## Active Decisions
+- Considering whether to migrate from REST to GraphQL for the dashboard
+
+## Constraints
 - Never modify generated/ directory — it's auto-generated from OpenAPI spec
+- Auth middleware expects a JWT in the Authorization header
 - Environment variables are documented in .env.example
-- The auth middleware expects a JWT in the Authorization header
 ```
 
 **写法要点：**

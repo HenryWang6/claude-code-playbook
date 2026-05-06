@@ -60,13 +60,30 @@ cp CLAUDE-TEMPLATE.md ./新项目/CLAUDE.md
 
 ### 2.2 什么时候存 Memory
 
+**原则：对重要的项目决策，显式说比依赖自动检测更可靠。**
+
+Claude 会在你纠正它时自动保存 feedback memory。但 project memory（架构决策、废弃的方案、为什么选了 A 而不是 B）不会自动触发 — 这些你需要显式告诉它。
+
 | 场景 | 怎么说 |
 |------|--------|
 | Claude 犯了一个方向性错误，你纠正了 | "记住这个" |
 | 你发现了一个重要的项目约束 | "把这个记到 project memory" |
 | 你觉得某个偏好以后都用得上 | "存成 user memory" |
+| 放弃了一个方案 / 功能方向 | "记住我们为什么放弃了 X，存成 project memory" |
+| 更新了 CLAUDE.md 的 Scope / Active Decisions，移除了某项 | 同时把移除的*原因*存成 project memory |
 
-不需要存的：当前任务进度（用 Task）、代码架构（读代码就行）。
+**自然触发点：** 每次更新 CLAUDE.md 的 `## Scope` 或 `## Active Decisions` 时，有东西被移除 — 问自己"六个月后我还记得为什么放弃它吗？"不确定就存 memory。
+
+**信息放哪 — 速查：**
+
+| 放哪 | 适合什么 | 加载时机 |
+|------|---------|---------|
+| CLAUDE.md | 当前技术栈、约定、Scope、Active Decisions、Constraints | 每次会话 |
+| Memory (project) | 废弃方案的原因、历史决策、架构选择理由 | 按需检索 |
+| Memory (feedback) | 用户纠正和偏好 | 按需检索 |
+| Task | 当前会话的工作进度 | 仅当前会话 |
+
+不需要存的：当前任务进度细节（用 Task）、能从代码读出来的东西（读代码就行）。
 
 ### 2.3 什么时候更新 CLAUDE.md
 

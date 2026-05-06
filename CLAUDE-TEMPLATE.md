@@ -1,4 +1,5 @@
 # [Project Name]
+> [One sentence: what this does and who it's for]
 
 ## Tech Stack
 - [language / framework / platform]
@@ -14,6 +15,14 @@
 - [src/] — [what's here]
 - [tests/] — [what's here]
 - [docs/] — [what's here]
+
+## Scope
+- [what the project does — features, outputs, supported use cases]
+- [what's explicitly out of scope — no server, no auth, etc.]
+
+## Active Decisions
+- [things we're reconsidering, on hold, or actively debating]
+- [keep this short — 2-3 lines. Update as priorities shift]
 
 ## Constraints
 - [things that must NOT be changed]

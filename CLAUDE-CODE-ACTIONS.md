@@ -1,203 +1,203 @@
-# Claude Code 行动指南
+# Claude Code Action Guide
 
-按时机组织的操作清单。你只需要在脑子里记住"什么时候该做什么"，具体细节 Claude 会配合你执行。
+A checklist organized by timing. Just remember "what to do when" — Claude will help you execute the details.
 
 ---
 
-## 1. 项目第一天（一次性搭建）
+## 1. Project Day One (One-Time Setup)
 
-### 1.1 复制 CLAUDE 模板
+### 1.1 Copy the CLAUDE Template
 
 ```
-cp CLAUDE-TEMPLATE.md ./新项目/CLAUDE.md
+cp CLAUDE-TEMPLATE.md ./new-project/CLAUDE.md
 ```
 
-### 1.2 访谈式定制 CLAUDE.md
+### 1.2 Interview-Style CLAUDE.md Customization
 
-对 Claude 说：
+Tell Claude:
 
 > "read this CLAUDE.md template, then interview me to fill in the Tech Stack, Conventions, Key Paths, and Constraints sections. Ask me one section at a time."
 
-等你回答完后，Claude 会填好上半部分，下半部分的 Workflow 规则原样保留。
+After you answer, Claude will fill in the top half. The Workflow rules in the bottom half stay as-is.
 
-### 1.3 搭基础设施
+### 1.3 Set Up Infrastructure
 
-按顺序完成：
+Complete in order:
 
-| 动作 | 怎么说 |
+| Action | What to Say |
 |------|--------|
-| 初始化 git | "git init，创建 .gitignore" |
-| 配置 hooks | "配置 Stop hook 播放提示音，PermissionRequest hook 播放另一个提示音" |
-| 设权限 | "把常用的安全命令加到 allow list，deny rm -rf / sudo" |
-| 初次 commit | "commit these changes" |
+| Initialize git | "git init, create .gitignore" |
+| Configure hooks | "Configure a Stop hook to play a sound, and a PermissionRequest hook to play a different sound" |
+| Set permissions | "Add commonly used safe commands to the allow list, deny rm -rf / sudo" |
+| First commit | "commit these changes" |
 
 ---
 
-## 2. 日常开发循环
+## 2. Daily Development Cycle
 
-根据你要做的事情，选择正确的路径：
+Choose the right path based on what you need to do:
 
-### 2.1 判断树
+### 2.1 Decision Tree
 
 ```
-你打算做的事情...
+What you're planning to do...
 
-├── 改一行 / typo / 加个 log？
-│   └── 直接说 → Claude 直接改
+├── Fix a typo / one-liner / add a log?
+│   └── Just say it → Claude fixes it directly
 │
-├── 新功能 / 重构 / 改 >2 个文件？
-│   └── "我们先 Plan 一下" → Plan Mode → 审方案 → 实现
+├── New feature / refactor / changes to >2 files?
+│   └── "Let's Plan first" → Plan Mode → Review design → Implement
 │
-├── 有 3+ 个步骤的复杂任务？
-│   └── "拆成 Tasks，设好依赖" → 一个接一个完成
+├── Complex task with 3+ steps?
+│   └── "Break into Tasks, set up dependencies" → Complete one by one
 │
-├── 需要搜代码但不知道文件在哪？
-│   └── "帮我查一下 X 在哪里" → Explore Agent
+├── Need to search code but don't know which file?
+│   └── "Help me find where X is" → Explore Agent
 │
-└── 改完了？
-    └── "Review 一下改动" → 检查 → "commit"
+└── Done with changes?
+    └── "Review the changes" → Check → "commit"
 ```
 
-### 2.2 什么时候存 Memory
+### 2.2 When to Save to Memory
 
-**原则：对重要的项目决策，显式说比依赖自动检测更可靠。**
+**Principle: For important project decisions, explicitly stating is more reliable than relying on auto-detection.**
 
-Claude 会在你纠正它时自动保存 feedback memory。但 project memory（架构决策、废弃的方案、为什么选了 A 而不是 B）不会自动触发 — 这些你需要显式告诉它。
+Claude automatically saves feedback memory when you correct it. But project memory (architecture decisions, abandoned approaches, why you chose A over B) won't trigger automatically — you need to explicitly tell it.
 
-| 场景 | 怎么说 |
+| Scenario | What to Say |
 |------|--------|
-| Claude 犯了一个方向性错误，你纠正了 | "记住这个" |
-| 你发现了一个重要的项目约束 | "把这个记到 project memory" |
-| 你觉得某个偏好以后都用得上 | "存成 user memory" |
-| 放弃了一个方案 / 功能方向 | "记住我们为什么放弃了 X，存成 project memory" |
-| 更新了 CLAUDE.md 的 Scope / Active Decisions，移除了某项 | 同时把移除的*原因*存成 project memory |
+| Claude made a directional mistake, you corrected it | "Remember this" |
+| You discovered an important project constraint | "Save this to project memory" |
+| You have a preference that should apply going forward | "Save as user memory" |
+| You abandoned an approach / feature direction | "Remember why we abandoned X, save as project memory" |
+| You updated CLAUDE.md Scope / Active Decisions, removed something | Also save the *reason* for removal as project memory |
 
-**自然触发点：** 每次更新 CLAUDE.md 的 `## Scope` 或 `## Active Decisions` 时，有东西被移除 — 问自己"六个月后我还记得为什么放弃它吗？"不确定就存 memory。
+**Natural trigger:** Every time you update CLAUDE.md `## Scope` or `## Active Decisions` and something is removed — ask yourself "Will I remember why I dropped this six months from now?" If unsure, save to memory.
 
-**信息放哪 — 速查：**
+**Where to put information — Quick reference:**
 
-| 放哪 | 适合什么 | 加载时机 |
+| Where | Best For | When Loaded |
 |------|---------|---------|
-| CLAUDE.md | 当前技术栈、约定、Scope、Active Decisions、Constraints | 每次会话 |
-| Memory (project) | 废弃方案的原因、历史决策、架构选择理由 | 按需检索 |
-| Memory (feedback) | 用户纠正和偏好 | 按需检索 |
-| Task | 当前会话的工作进度 | 仅当前会话 |
+| CLAUDE.md | Current tech stack, conventions, Scope, Active Decisions, Constraints | Every session |
+| Memory (project) | Reasons for abandoned approaches, historical decisions, architecture rationale | On-demand retrieval |
+| Memory (feedback) | User corrections and preferences | On-demand retrieval |
+| Task | Work progress for the current session | Current session only |
 
-不需要存的：当前任务进度细节（用 Task）、能从代码读出来的东西（读代码就行）。
+Don't save: current task progress details (use Tasks), things you can read from the code (just read the code).
 
-### 2.3 什么时候更新 CLAUDE.md
+### 2.3 When to Update CLAUDE.md
 
-| 触发事件 | 怎么说 |
+| Trigger Event | What to Say |
 |----------|--------|
-| 团队确定了新的编码约定 | "更新 CLAUDE.md，加一条约定" |
-| 发现一个不能改的模块 | "更新 CLAUDE.md 的 Constraints" |
-| 换了技术栈 | "更新 CLAUDE.md 的 Tech Stack" |
+| Team agreed on a new coding convention | "Update CLAUDE.md, add a convention" |
+| Discovered a module that must not be changed | "Update CLAUDE.md Constraints" |
+| Changed the tech stack | "Update CLAUDE.md Tech Stack" |
 
-**原则**：每次 Claude 因为"不知道约定"而犯错，就把那条约定写进 CLAUDE.md。
-
----
-
-## 3. 验证与纠错
-
-### 3.1 让 Claude 验证自己的工作
-
-Claude 说"完成了"不代表真的完成了。你必须主动要求：
-
-| 场景 | 怎么说 |
-|------|--------|
-| 改前端代码 | "启动 dev server，在浏览器里测试" |
-| 改后端逻辑 | "跑相关测试" |
-| 改 CLI 工具 | "用几个不同输入跑一下看看输出" |
-| 改了配置 | "验证配置能正确加载" |
-
-### 3.2 当 Claude 走偏了
-
-不要忍着一轮一轮纠。发现方向问题立刻打断：
-
-| 问题 | 怎么说 |
-|------|--------|
-| 过度工程 | "太复杂了，保持简单。三个相似行 > 过早抽象" |
-| 遗漏边界情况 | "也考虑一下 X 场景" |
-| 方向完全错了 | "不对，应该用 Y 方案，因为 Z。重来。" |
-| 幻觉 / 编造 API | "那个 API 不存在，先查文档确认" |
-
-### 3.3 权限渐进策略
-
-开始项目时用默认权限（确认弹窗多）。用了一周后：
-
-> "帮我用 fewer-permission-prompts skill 分析，把高频安全命令加到 allow list"
-
-不要一开始就 `allow: ["Bash(*)"]`。
+**Principle**: Every time Claude makes a mistake because it "didn't know a convention," add that convention to CLAUDE.md.
 
 ---
 
-## 4. 会话管理
+## 3. Verification and Course Correction
 
-| 信号 | 行动 |
+### 3.1 Make Claude Verify Its Own Work
+
+Claude saying "done" doesn't mean it's actually done. You must actively ask:
+
+| Scenario | What to Say |
+|------|--------|
+| UI changes | "Start the dev server and test in the browser" |
+| Backend logic changes | "Run the relevant tests" |
+| CLI tool changes | "Run it with a few different inputs and check the output" |
+| Config changes | "Verify the config loads correctly" |
+
+### 3.2 When Claude Goes Off Track
+
+Don't tolerate it and correct round after round. Interrupt immediately when you spot a direction problem:
+
+| Problem | What to Say |
+|------|--------|
+| Over-engineering | "Too complex, keep it simple. Three similar lines > premature abstraction" |
+| Missing edge cases | "Also consider scenario X" |
+| Completely wrong direction | "No, should use approach Y, because Z. Start over." |
+| Hallucination / made-up API | "That API doesn't exist, check the docs first" |
+
+### 3.3 Permission Strategy: Gradual
+
+Start with default permissions (more confirmation prompts). After using it for a week:
+
+> "Use the fewer-permission-prompts skill to analyze and add high-frequency safe commands to the allow list"
+
+Don't start with `allow: ["Bash(*)"]`.
+
+---
+
+## 4. Session Management
+
+| Signal | Action |
 |------|------|
-| Claude 回复明显变慢 | `/compact` — 压缩上下文 |
-| 话题完全换了 | `/clear` — 清空会话，重开 |
-| 上下文用了很久，当前任务已完成 | `/compact` — 清理掉无关历史 |
-| Claude 开始表现出"记忆错乱" | `/clear` 然后重新描述当前任务 |
+| Claude's responses are noticeably slow | `/compact` — compress context |
+| Topic completely changed | `/clear` — clear session, start fresh |
+| Context has grown large, current task is done | `/compact` — clean up irrelevant history |
+| Claude starts showing "memory confusion" | `/clear` then re-describe the current task |
 
-**规则**：`/clear` = 全新开始；`/compact` = 保留关键信息，丢掉过程细节。
+**Rule**: `/clear` = brand new start; `/compact` = keep key info, discard process details.
 
 ---
 
-## 5. 收尾与提交
+## 5. Finishing Up and Committing
 
 ```
-改动做完了
-  → "review 一下这些改动"（检查边界、安全、过度工程）
-  → "跑测试"（如果项目有测试）
-  → "commit these changes"（提供 commit message 方向）
-  → 推送到远程（如果有）
+Changes are done
+  → "review these changes" (check edge cases, security, over-engineering)
+  → "run tests" (if the project has tests)
+  → "commit these changes" (provide commit message direction)
+  → push to remote (if applicable)
 ```
 
-### Commit 格式
+### Commit Format
 
 ```
-<type>: <简短描述>
+<type>: <short description>
          ^— feat / fix / chore / docs / refactor / test
 
-Body 写"为什么改"，不是"改了什么"
+Body explains "why the change," not "what changed"
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>
 ```
 
-Claude 会自动追加 `Co-Authored-By` 行。
+Claude will automatically append the `Co-Authored-By` line.
 
 ---
 
-## 6. 学习记录
+## 6. Learning Log
 
-### 已实践过的概念（2026-05-05，cc_test 项目）
+### Concepts Practiced (2026-05-05, cc_test project)
 
-| 概念 | 怎么学的 | 掌握程度 |
+| Concept | How Learned | Proficiency |
 |------|---------|---------|
-| CLAUDE.md | 手写了项目指令，做了模板 | ✅ 会用 |
-| Plan Mode | 设计 markdown 预览器 | ✅ 会用 |
-| Task 系统 | 4 个 Task + 依赖关系 | ✅ 会用 |
-| Memory | 存了 user_role，理解了隔离 | ✅ 理解 |
-| Hooks（Stop + PermissionRequest） | 配了双提示音 | ✅ 会用 |
-| Git 工作流 | init / ignore / commit | ✅ 会用 |
-| Agent（Explore/Plan/general-purpose） | 理论了解了 | 🟡 理论 OK，没实际用过 |
-| 权限配置 | 基础的 allow/deny | 🟡 用过但没系统调优 |
-| /compact / /clear | 理论了解了 | 🟡 还没实践过 |
+| CLAUDE.md | Hand-wrote project instructions, made templates | ✅ Proficient |
+| Plan Mode | Designed a markdown previewer | ✅ Proficient |
+| Task System | 4 Tasks + dependencies | ✅ Proficient |
+| Memory | Saved user_role, understood isolation | ✅ Understands |
+| Hooks (Stop + PermissionRequest) | Configured dual notification sounds | ✅ Proficient |
+| Git Workflow | init / ignore / commit | ✅ Proficient |
+| Agents (Explore/Plan/general-purpose) | Theory learned | 🟡 Theory OK, no hands-on practice yet |
+| Permission Configuration | Basic allow/deny | 🟡 Used but not systematically tuned |
+| /compact / /clear | Theory learned | 🟡 Haven't practiced yet |
 
-### 待学习清单
+### To-Learn List
 
-准备在**更复杂的项目**中练习：
+Plan to practice in a **more complex project**:
 
-- **Explore Agent 实战** — 在陌生代码库里搜索、定位功能
-- **多次 Plan-Implement-Review 循环** — 迭代式开发
-- **中断与恢复** — 长任务被中断后如何让 Claude 继续
-- **Hooks 进阶** — PostToolUse 自动 format、PreToolUse 阻断危险操作
-- **多 Agent 并行** — 同时搜索多个方面
-- **PR 工作流** — 分支、推送、PR 描述
+- **Explore Agent hands-on** — search and locate features in unfamiliar codebases
+- **Multiple Plan-Implement-Review cycles** — iterative development
+- **Interruption and recovery** — how to have Claude continue after a long task is interrupted
+- **Advanced Hooks** — PostToolUse auto-format, PreToolUse to block dangerous operations
+- **Multi-Agent parallelism** — search multiple areas simultaneously
+- **PR workflow** — branching, pushing, PR descriptions
 
-### 什么时候回来看这份清单
+### When to Revisit This List
 
-- 接手一个新项目，不知道该从哪开始
-- 遇到一个复杂功能，不确定流程
-- 发现某个概念（如 Agent）只在理论层面理解，想找机会实践
+- Starting a new project and not sure where to begin
+- Facing a complex feature and uncertain about the workflow
+- Realizing a concept (like Agents) is only understood at a theoretical level, looking for hands-on opportunities

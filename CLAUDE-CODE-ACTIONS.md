@@ -48,6 +48,15 @@ What you're planning to do...
 ├── New feature / refactor / changes to >2 files?
 │   └── "Let's Plan first" → Plan Mode → Review design → Implement
 │
+├── New feature, unclear architecture?
+│   └── Architect subagent → produces SPEC.md + TODO.md → you review → then Developer
+│
+├── Spec is clear, ready to code?
+│   └── Developer subagent → produces code + DONE.md → you review → then Reviewer
+│
+├── Code written, want independent quality check?
+│   └── Reviewer subagent → appends review to DONE.md → fix or proceed
+│
 ├── Complex task with 3+ steps?
 │   └── "Break into Tasks, set up dependencies" → Complete one by one
 │
@@ -57,6 +66,8 @@ What you're planning to do...
 └── Done with changes?
     └── "Review the changes" → Check → "commit"
 ```
+
+> **Subagent workflow**: See [CLAUDE-CODE-SUBAGENTS.md](CLAUDE-CODE-SUBAGENTS.md) for the full Iron Triangle pattern — Architect → Developer → Reviewer, with copy-paste System Prompt templates.
 
 ### 2.2 When to Save to Memory
 
@@ -156,6 +167,19 @@ Changes are done
   → "commit these changes" (provide commit message direction)
   → push to remote (if applicable)
 ```
+
+### Subagent Commit Discipline
+
+When using subagents (Architect / Developer / Reviewer), every agent session must end with a commit. This is non-negotiable — agent work without a paper trail is lost work.
+
+| Agent | Commit Message Pattern |
+|-------|----------------------|
+| Architect | `docs: add spec and task list` |
+| Developer | `feat: <task description>` (one commit per task) |
+| Reviewer | `review: <what was reviewed>` (if fixes applied) |
+| Bootstrap | `chore: bootstrap development environment` |
+
+If a subagent finishes without committing, remind it: "Commit your changes before moving on."
 
 ### Commit Format
 

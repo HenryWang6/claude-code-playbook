@@ -267,6 +267,26 @@ Claude Code has several specialized sub-agents, each with its own use case:
 - If an Agent is already running and its task isn't done, use **SendMessage** to continue the same Agent, **don't spawn a new one** (new Agents don't have prior context)
 - Explicitly tell the Agent whether you want **research only** or **write code** — it doesn't know your intent
 
+#### 2.4.1 Custom Subagent Patterns (Iron Triangle)
+
+Beyond the built-in agents, you can design your own subagent roles for software development. The recommended pattern is the **Iron Triangle** — three roles that map to the Plan → Implement → Review cycle:
+
+| Role | Maps To | Trigger | Key Deliverable |
+|------|---------|---------|-----------------|
+| **Architect** | Plan Mode | New feature, unclear scope | SPEC.md + TODO.md (with acceptance criteria) |
+| **Developer** | Implement | TODO.md has unchecked items | Code changes + DONE.md (change log) |
+| **Reviewer** | Review | Tasks marked done in TODO.md | Review conclusion appended to DONE.md |
+
+Plus one on-demand role: **Bootstrap** — summoned only at project init or when adding new infrastructure. Sets up the dev environment and verifies all commands work, then disappears.
+
+**Key rules for custom subagents:**
+- **Files as shared memory** — agents communicate through SPEC.md, TODO.md, and DONE.md, not through conversation context
+- **Human holds the baton** — you decide when to move from Architect to Developer to Reviewer; no fully autonomous loops
+- **Document and commit as you go** — every agent session ends with written output and a git commit; agent work without a paper trail is lost work
+- **One task per commit** — keeps changes small, reviewable, and traceable
+
+See the full guide: [CLAUDE-CODE-SUBAGENTS.md](CLAUDE-CODE-SUBAGENTS.md) — includes copy-paste System Prompt templates for each role, a worked Pomodoro Timer example, and common pitfalls.
+
 ### 2.5 Parallel Strategies
 
 **When to parallelize:**

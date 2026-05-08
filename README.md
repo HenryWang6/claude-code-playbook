@@ -10,6 +10,7 @@ A practical guide to working with Claude Code — learned by doing, documented f
 | `CLAUDE-TEMPLATE.md` | **Seed file** — copy into new projects, then ask Claude to interview you and fill it in |
 | `CLAUDE-CODE-ACTIONS.md` | **Action guide** — what to do and when, organized by project phase |
 | `CLAUDE-CODE-BEST-PRACTICES.md` | **Concept manual** — deep dive into CLAUDE.md, Plan Mode, Tasks, Memory, Hooks, Agents, Git workflow |
+| `CLAUDE-CODE-SUBAGENTS.md` | **Subagent design guide** — Iron Triangle pattern (Architect/Developer/Reviewer) with copy-paste prompt templates |
 | `docs/decisions/` | ADR directory for settled architecture decisions (template inside) |
 | `md_preview.py` | Example project built while learning the workflow (Markdown → HTML previewer) |
 

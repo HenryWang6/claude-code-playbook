@@ -113,16 +113,17 @@ Don't save: current task progress details (use Tasks), things you can read from 
 
 ## 3. Verification and Course Correction
 
-### 3.1 Make Claude Verify Its Own Work
+### 3.1 Expect Micro-Verification — Don't Let Claude Skip It
 
-Claude saying "done" doesn't mean it's actually done. You must actively ask:
+Claude should auto-verify after each logical unit (see [Micro-Verification Loops](../CLAUDE.md#micro-verification-loops)). You should not need to ask. If Claude finishes a task without showing verification output, it skipped a step — call it out:
 
-| Scenario | What to Say |
+| Scenario | If Claude skipped verification, say |
 |------|--------|
-| UI changes | "Start the dev server and test in the browser" |
-| Backend logic changes | "Run the relevant tests" |
-| CLI tool changes | "Run it with a few different inputs and check the output" |
-| Config changes | "Verify the config loads correctly" |
+| UI changes | "I didn't see you test this in the browser. Start the dev server and verify." |
+| Backend logic changes | "You didn't run the tests for this change. Run them now." |
+| CLI tool changes | "Run it with a few different inputs and show me the output." |
+| Config changes | "Verify the config loads correctly before claiming done." |
+| Any change | "Show me the verification output — compile, run, test — for each unit you changed." |
 
 ### 3.2 When Claude Goes Off Track
 
@@ -161,12 +162,16 @@ Don't start with `allow: ["Bash(*)"]`.
 ## 5. Finishing Up and Committing
 
 ```
-Changes are done
+All logical units implemented
+  → Verify micro-checks ran: did Claude compile/run/test after each unit?
+    (If no evidence → "show me the verification output for each unit")
   → "review these changes" (check edge cases, security, over-engineering)
-  → "run tests" (if the project has tests)
+  → "run the full test suite" (final confirmation — units already passed individually)
   → "commit these changes" (provide commit message direction)
   → push to remote (if applicable)
 ```
+
+> **Note:** Tests should have run throughout implementation, not just at the end. The final `run tests` is a safety net, not the primary verification. If you're running tests for the first time at this stage, the micro-verification loop was skipped.
 
 ### Subagent Commit Discipline
 
@@ -198,33 +203,36 @@ Claude will automatically append the `Co-Authored-By` line.
 
 ## 6. Learning Log
 
-### Concepts Practiced (2026-05-05, cc_test project)
+### Concepts Practiced (2026-05-09, playbook refinement)
 
 | Concept | How Learned | Proficiency |
 |------|---------|---------|
 | CLAUDE.md | Hand-wrote project instructions, made templates | ✅ Proficient |
 | Plan Mode | Designed a markdown previewer | ✅ Proficient |
 | Task System | 4 Tasks + dependencies | ✅ Proficient |
-| Memory | Saved user_role, understood isolation | ✅ Understands |
+| Memory | Saved user_role, understood isolation | ✅ Proficient |
 | Hooks (Stop + PermissionRequest) | Configured dual notification sounds | ✅ Proficient |
 | Git Workflow | init / ignore / commit | ✅ Proficient |
-| Agents (Explore/Plan/general-purpose) | Theory learned | 🟡 Theory OK, no hands-on practice yet |
+| Agents (Explore/Plan/general-purpose) | Theory + Iron Triangle subagent design | ✅ Proficient |
 | Permission Configuration | Basic allow/deny | 🟡 Used but not systematically tuned |
 | /compact / /clear | Theory learned | 🟡 Haven't practiced yet |
+| Subagent Iron Triangle | Designed Architect/Developer/Reviewer pattern with SPEC/TODO/DONE files | ✅ Proficient |
+| Micro-Verification Loops | Integrated into CLAUDE.md and subagent prompts as a core workflow rule | 🟡 Theory designed, needs battle-testing in real projects |
+| Repository Mapping | Added two-step fetch rule to prevent context dilution | 🟡 Theory designed, needs battle-testing in real projects |
 
 ### To-Learn List
 
 Plan to practice in a **more complex project**:
 
-- **Explore Agent hands-on** — search and locate features in unfamiliar codebases
-- **Multiple Plan-Implement-Review cycles** — iterative development
-- **Interruption and recovery** — how to have Claude continue after a long task is interrupted
+- **Micro-Verification Loops in practice** — observe whether agents self-correct effectively when feedback radius is small
+- **Repository Mapping in practice** — tune the map format (CLAUDE.md Key Paths vs ARCHITECTURE.md) for different project sizes
+- **Circuit breaker behavior** — does the 3-failure rule prevent death spirals or fire too aggressively?
 - **Advanced Hooks** — PostToolUse auto-format, PreToolUse to block dangerous operations
-- **Multi-Agent parallelism** — search multiple areas simultaneously
+- **Multi-Agent parallelism** — search multiple areas simultaneously, parallel independent verifications
 - **PR workflow** — branching, pushing, PR descriptions
 
 ### When to Revisit This List
 
-- Starting a new project and not sure where to begin
-- Facing a complex feature and uncertain about the workflow
-- Realizing a concept (like Agents) is only understood at a theoretical level, looking for hands-on opportunities
+- After 2-3 real projects using the micro-verification + repo-mapping patterns
+- When a subagent gets stuck in a fix loop despite the circuit breaker rule
+- When context dilution still occurs despite two-step fetch

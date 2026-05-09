@@ -19,6 +19,8 @@
   - [3.4 Hooks Mechanism](#34-hooks-mechanism)
   - [3.5 Git Workflow](#35-git-workflow)
   - [3.6 Common Anti-Patterns](#36-common-anti-patterns)
+  - [3.7 Test-Driven AI Agent (TDD for Agents)](#37-test-driven-ai-agent-tdd-for-agents)
+  - [3.8 Repository Mapping & Context Management](#38-repository-mapping--context-management)
 - [4. Quick Reference](#4-quick-reference)
 
 ---
@@ -515,6 +517,84 @@ Here are common pitfalls when using Claude Code:
 **10. Allowing all permissions**
 - Broad `"allow": ["Bash(*)"]` = running naked
 - Use a denylist to guard the bottom line (`rm -rf`, `sudo`, `curl | sh`)
+
+**11. End-of-task verification**
+- Writing all the code, then running the full test suite — when it fails, the error surface is the entire change and diagnosis is expensive
+- Instead: verify each independently testable logical unit before moving to the next. The feedback radius (how much code you have to search for the bug) must be smaller than your diagnostic range (how much code you can reason about in 10 seconds)
+
+**12. Reading without a map**
+- Diving into source files without first understanding the project structure — this fills context with irrelevant files and dilutes attention
+- Instead: read the project map first (CLAUDE.md `## Key Paths`, `## Scope`, or a dedicated file tree), then output an explicit list of which files you need to read, and read only those
+
+---
+
+### 3.7 Test-Driven AI Agent (TDD for Agents)
+
+The core problem: AI agents naturally defer verification to the end of implementation. They write all the code, then run the tests — and when it fails, the error surface is the entire change. This is the single biggest efficiency killer in AI-assisted development.
+
+The solution: **micro-verification loops** — verify after each independently testable logical unit, not after the whole task.
+
+**What is a logical unit?**
+
+A piece of code with clear input/output boundaries that can be verified independently. The litmus test: *"If this unit's verification fails, can I pinpoint the cause in 10 seconds?"*
+
+| Language/Stack | A logical unit ≈ | Lightest verification |
+|---------------|-------------------|----------------------|
+| Python | A function | `python -c "import module; module.func(test_input)"` |
+| TypeScript | A component or a function | `npx tsc --noEmit`, or run the single test |
+| Go | A function or a handler | `go build ./...` or `go test -run TestXxx` |
+| SQL | A CTE or a subquery | Compile the model, or run with a LIMIT |
+| Rust | A function or a module | `cargo check` or `cargo test test_name` |
+
+**Circuit breaker rule:**
+
+If the same logical unit fails verification 3 times in a row, **stop and report**. Three consecutive failures on the same code means the approach is wrong — not the implementation. Do not guess a 4th fix. Report to the human: what was attempted, what errors occurred, what you recommend.
+
+**Verification progression:**
+
+```
+Unit verify (compile/lint) → Unit verify (run) → Full test suite → End-to-end
+```
+
+Each stage gates the next. Never skip a stage. Never run the full test suite before individual units pass.
+
+**Integration with the Iron Triangle:**
+- **Developer:** micro-verifies after each logical unit, records verification commands in DONE.md
+- **Reviewer:** independently re-runs the test suite, checks DONE.md for verification evidence. No evidence → NEEDS FIX
+- **Architect:** specifies acceptance criteria granular enough for unit-level verification
+
+### 3.8 Repository Mapping & Context Management
+
+The core problem: AI agents have limited context windows and suffer from **attention dilution** — the more irrelevant code they read, the worse their reasoning becomes. Giving an agent a task and letting it explore freely often results in it reading 15 files when only 3 matter.
+
+The solution: **two-step fetch** — read the map first, then target specific files.
+
+**Step 1: Orient**
+
+Read the project map to understand structure. What counts as a map depends on project size:
+
+| Project size | Map |
+|-------------|-----|
+| Small (single-digit files) | CLAUDE.md `## Key Paths` + `## Scope` is sufficient |
+| Medium (10-50 files) | CLAUDE.md + `tree` output (directory-only, max 2 levels deep) |
+| Large (50+ files) | Dedicated `ARCHITECTURE.md` — module overview, one-line description per directory |
+
+The map should contain: file paths, module names, one-line descriptions. Not full source code.
+
+**Step 2: Target**
+
+Before reading any source file, output an explicit list:
+> "To complete this task, I need to read these N files: [file paths]. These are the only files I will touch."
+
+This forces the agent to make a deliberate scoping decision. It also lets the human catch scope errors early ("No, you also need to read the auth middleware" or "Don't touch the billing module").
+
+**Maintaining the map:**
+
+- For small/medium projects: `## Key Paths` in CLAUDE.md is the map. Keep it current.
+- For large projects: generate `ARCHITECTURE.md` once, update it when modules are added or reorganized. A stale map is worse than no map.
+
+**Anti-pattern to avoid:**
+- Don't use `grep -r` as a substitute for reading the map. Grep finds occurrences but doesn't tell you which files matter.
 
 ---
 

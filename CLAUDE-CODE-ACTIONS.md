@@ -47,9 +47,47 @@ Complete in order:
 | Action | What to Say |
 |------|--------|
 | Initialize git | "git init, create .gitignore" |
-| Configure hooks | "Configure a Stop hook to play a sound, and a PermissionRequest hook to play a different sound" |
-| Set permissions | "Add commonly used safe commands to the allow list, deny rm -rf / sudo" |
+| Configure hooks (one-time) | "Configure a Stop hook to play a sound, and a PermissionRequest hook to play a different sound" — user-scope, applies to all projects |
+| Set permissions | Paste the permissions block below into `.claude/settings.json` |
 | First commit | "commit these changes" |
+
+**Permissions to paste** (project-scope — copy this into `.claude/settings.json`):
+
+```json
+"permissions": {
+  "allow": [
+    "Bash(git status*)",
+    "Bash(git diff*)",
+    "Bash(git log*)",
+    "Bash(git branch*)",
+    "Bash(git add*)",
+    "Bash(git commit*)",
+    "Bash(git checkout*)",
+    "Bash(git pull*)",
+    "Bash(npm *)",
+    "Bash(npx *)",
+    "Bash(pip install*)",
+    "Bash(python *)",
+    "Bash(python3 *)",
+    "Bash(ls *)",
+    "Bash(find *)",
+    "Bash(grep *)",
+    "Bash(node *)",
+    "Bash(make *)",
+    "Bash(mkdir *)",
+    "Bash(cp *)",
+    "Bash(mv *)",
+    "Bash(curl *)"
+  ],
+  "deny": [
+    "Bash(rm -rf /*)",
+    "Bash(sudo *)",
+    "Bash(chmod 777*)",
+    "Bash(git push --force*)",
+    "Bash(git reset --hard*)"
+  ]
+}
+```
 
 ---
 
@@ -135,7 +173,7 @@ Don't save: current task progress details (use Tasks), things you can read from 
 
 ### 3.1 Expect Micro-Verification — Don't Let Claude Skip It
 
-Claude should auto-verify after each logical unit (see [Micro-Verification Loops](../CLAUDE.md#micro-verification-loops)). You should not need to ask. If Claude finishes a task without showing verification output, it skipped a step — call it out:
+Claude should auto-verify after each logical unit (see [CLAUDE-CODE-SUBAGENTS.md](CLAUDE-CODE-SUBAGENTS.md) Developer System Prompt for the full verification progression). You should not need to ask. If Claude finishes a task without showing verification output, it skipped a step — call it out:
 
 | Scenario | If Claude skipped verification, say |
 |------|--------|
@@ -158,7 +196,7 @@ Don't tolerate it and correct round after round. Interrupt immediately when you 
 
 ### 3.3 Permission Strategy: Gradual
 
-Start with default permissions (more confirmation prompts). After using it for a week:
+Start with the baseline allowlist from 1.3. After using it for a week:
 
 > "Use the fewer-permission-prompts skill to analyze and add high-frequency safe commands to the allow list"
 

@@ -46,7 +46,6 @@
 | 3+ distinct steps | **TaskCreate** — track each step, use dependencies |
 | Starting a new task | **Read project map first** (CLAUDE.md Key Paths, ARCHITECTURE.md, or file tree), then target only the files you need |
 | Need to search/explore codebase | **Explore Agent** (don't guess file paths) |
-| Multi-step research spanning many files | **general-purpose Agent** |
 | Completed a logical unit of code | **Micro-verify** — run the lightest check that catches errors at this boundary before moving on |
 | Same verification fails 3 times | **Stop and report** — do not guess alternative fixes; report what was tried and ask for guidance |
 | Implementation done | **Review** — check edge cases, security, over-engineering |

@@ -261,6 +261,11 @@ Claude Code has several specialized sub-agents, each with its own use case:
 | **Plan** | Software architecture design | Design implementation approaches, evaluate architecture decisions, output step-by-step plans. |
 | **general-purpose** | General multi-step tasks | Complex tasks requiring search + analysis + possibly code changes. |
 | **claude-code-guide** | Questions about Claude Code itself | "What can Claude do?", "How do I configure X?", "How does this feature work?" |
+| **Architect** (custom) | Feature design and task breakdown | New feature, unclear scope. Outputs SPEC.md + TODO.md, writes no code. |
+| **Developer** (custom) | Implementation from task list | SPEC.md exists, TODO.md has unchecked items. One task per commit. |
+| **Reviewer** (custom) | Independent QA and code review | Tasks marked done. Runs tests, appends review to DONE.md. |
+
+See Section 2.4.1 below for the full Iron Triangle pattern. See [CLAUDE-CODE-SUBAGENTS.md](CLAUDE-CODE-SUBAGENTS.md) for agent System Prompt templates.
 
 **Agent usage principles:**
 - If you know the file path, use Read/Edit directly — don't go through an Agent
@@ -283,6 +288,7 @@ Plus one on-demand role: **Bootstrap** — summoned only at project init or when
 
 **Key rules for custom subagents:**
 - **Files as shared memory** — agents communicate through SPEC.md, TODO.md, and DONE.md, not through conversation context
+- **Agent files are scaffolding** — SPEC/TODO/DONE are temporary; when the feature ships, promote architectural decisions to `docs/decisions/` and delete the agent files
 - **Human holds the baton** — you decide when to move from Architect to Developer to Reviewer; no fully autonomous loops
 - **Document and commit as you go** — every agent session ends with written output and a git commit; agent work without a paper trail is lost work
 - **One task per commit** — keeps changes small, reviewable, and traceable
@@ -376,17 +382,23 @@ Claude Code's permission system lets you precisely control which operations requ
 {
   "permissions": {
     "allow": [
-      "Bash(git:status)",
-      "Bash(git:diff)",
-      "Bash(git:log)",
-      "Bash(npm:run*)",
-      "Bash(go:test*)"
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(npm *)",
+      "Bash(python *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(grep *)"
     ],
     "deny": [
-      "Bash(rm:-rf*)",
-      "Bash(sudo:*)",
-      "Bash(curl:* | sh)",
-      "Bash(git:push:--force*)"
+      "Bash(rm -rf /*)",
+      "Bash(sudo *)",
+      "Bash(chmod 777*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
     ]
   }
 }
@@ -522,7 +534,12 @@ Here are common pitfalls when using Claude Code:
 - Writing all the code, then running the full test suite — when it fails, the error surface is the entire change and diagnosis is expensive
 - Instead: verify each independently testable logical unit before moving to the next. The feedback radius (how much code you have to search for the bug) must be smaller than your diagnostic range (how much code you can reason about in 10 seconds)
 
-**12. Reading without a map**
+**12. Treating agent files as permanent memory**
+- SPEC.md, TODO.md, and DONE.md are temporary scaffolding for the current feature — not permanent project artifacts
+- Letting them accumulate dilutes attention and competes with `docs/decisions/` as the source of truth
+- When the feature ships: promote significant decisions to `docs/decisions/`, delete the agent files. Git history is the authoritative record.
+
+**13. Reading without a map**
 - Diving into source files without first understanding the project structure — this fills context with irrelevant files and dilutes attention
 - Instead: read the project map first (CLAUDE.md `## Key Paths`, `## Scope`, or a dedicated file tree), then output an explicit list of which files you need to read, and read only those
 
@@ -625,7 +642,8 @@ Need to search code?
 
 Need to implement a feature?
 ├── Trivial (one or two lines) → Edit directly
-├── Non-trivial → Plan Mode → Review → Implement
+├── Unclear scope or architecture → Architect subagent → Developer subagent → Reviewer subagent
+├── Scope is clear, non-trivial → Plan Mode → Review → Implement
 └── Uncertainties → Explore first → Then Plan
 
 Need to track progress?

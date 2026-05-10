@@ -18,6 +18,9 @@ Agents propose and execute — you decide when to move to the next phase. No ful
 **Document and commit as you go.**
 Every agent session ends with written output and a checkpoint commit. Agent work without a paper trail is lost work. This norm prevents context loss and makes agent contributions auditable.
 
+**Agent files are scaffolding, not permanent memory.**
+SPEC.md, TODO.md, and DONE.md exist for the duration of the feature. When the feature ships, extract any architectural rationale into `docs/decisions/` and delete the agent files. Git commits already record what changed and why — DONE.md is redundant once the branch merges. This keeps the permanent memory channels clean: `docs/decisions/` for settled architecture decisions, CLAUDE.md `## Active Decisions` for in-flight debates, and Memory for your preferences.
+
 ---
 
 ## 2. The Iron Triangle
@@ -156,6 +159,10 @@ following the design in SPEC.md.
 - Do NOT work on tasks marked as dependent on incomplete tasks
 - Follow existing code conventions in the project (read CLAUDE.md)
 - If you can't verify something, say so in DONE.md — don't claim it's working
+- DONE.md is temporary scaffolding — all agent files (SPEC/TODO/DONE) are
+  deleted when the feature ships. If you make a significant architectural decision
+  during implementation, flag it for promotion:
+  `Decision (promote to docs/decisions): <what and why>`
 ```
 
 ### 2.3 Reviewer (QA)
@@ -218,6 +225,9 @@ Append your review to DONE.md in this format:
 - Always run the test suite yourself before concluding — no passing a review without tests
 - If tests don't exist for the changed code, status is NEEDS FIX regardless of other findings
 - Check DONE.md for verification evidence — a Developer that can't show its work hasn't verified
+- After final review passes, scan DONE.md for decisions marked "promote to
+  docs/decisions" — flag them explicitly so the human knows what to extract before
+  deleting the agent files. These files (SPEC/TODO/DONE) are temporary scaffolding.
 ```
 
 ---
@@ -345,7 +355,9 @@ Copy this section into your project's CLAUDE.md to codify the subagent rules. Ag
 ### File Convention
 - Design intent: SPEC.md
 - Task list: TODO.md
-- Change log + decisions + reviews: DONE.md (append-only)
+- Change log + decisions + reviews: DONE.md
+- These files are temporary scaffolding — delete when the feature ships
+- Architectural decisions worth keeping: promote to `docs/decisions/` before deleting
 
 ### Commit Discipline
 - Every agent session ends with a git commit
@@ -363,6 +375,9 @@ Copy this section into your project's CLAUDE.md to codify the subagent rules. Ag
 6. If Reviewer flags issues → back to Developer
 
 ### Rules
+- Two-step fetch before reading source files: read the project map first, then state which files you'll read — read only those
+- Micro-verify after each independently testable logical unit — not just at the end
+- Circuit breaker: 3 consecutive failures on the same unit → stop and report to human
 - One task per Developer commit — keep changes small and reviewable
 - Agents read CLAUDE.md + SPEC.md before acting — stay aligned
 - Agents do NOT modify SPEC.md — flag design issues in DONE.md instead
@@ -523,6 +538,9 @@ An agent that writes 500 lines across 8 files and doesn't commit is a disaster w
 
 ### Using the same Agent for too long
 After 3-4 tasks, an Agent's context is stale (it no longer re-reads SPEC.md naturally). Dispatch a **fresh Developer** for the next batch — it will re-read all the files and catch drift the previous Agent missed.
+
+### Treating agent files as permanent memory
+SPEC.md, TODO.md, and DONE.md are scaffolding — they exist for the current feature, not forever. If you never delete them, your project root accumulates stale specs and done logs that compete for attention with `docs/decisions/`. When the feature ships: promote significant decisions to `docs/decisions/`, then delete the agent files. Git history is the authoritative record.
 
 ### Reviewer as rubber stamp
 If the Reviewer always says PASS, something is wrong. Rotate review focus: one session emphasize security, the next emphasize edge cases, the next emphasize code quality. A good Reviewer finds at least one thing to improve.

@@ -6,6 +6,26 @@ A checklist organized by timing. Just remember "what to do when" — Claude will
 
 ## 1. Project Day One (One-Time Setup)
 
+### 1.0 Set Up Iron Triangle Agents (One-Time, First Project Only)
+
+The decision tree in Section 2.1 references three subagents: Architect, Developer, Reviewer. These must exist before you can dispatch them. Create them once at user scope — they'll be available across all your projects.
+
+| Agent | File to create |
+|-------|---------------|
+| Architect | `~/.claude/agents/architect.md` |
+| Developer | `~/.claude/agents/developer.md` |
+| Reviewer | `~/.claude/agents/reviewer.md` |
+
+**What to say:**
+
+> "Create the three Iron Triangle subagents at my user scope (~/.claude/agents/). Use the System Prompt templates from CLAUDE-CODE-SUBAGENTS.md Section 2 for Architect, Developer, and Reviewer. Add appropriate YAML frontmatter to each."
+
+Claude will create three agent files with YAML frontmatter (`name`, `description`, `model: inherit`, `memory: user`) and the System Prompt body from SUBAGENTS.md Sections 2.1–2.3.
+
+After creation, verify with: **"list my user-scope agents"**
+
+> **Note:** This is a one-time setup. You don't repeat this for each new project — user-scope agents are available everywhere.
+
 ### 1.1 Copy the CLAUDE Template
 
 ```
